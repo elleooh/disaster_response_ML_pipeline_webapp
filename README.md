@@ -71,6 +71,6 @@ The emergency data is provided by [Figure Eight](https://appen.com/). The data c
 
 ## Instructions <a name="instructions"></a>
 
-- **Run ETL pipeline:**`python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv`
+- **Run ETL pipeline:**`python data/process_data.py data/messages.csv data/categories.csv data/DisasterResponse.db`
 - **Run ML pipeline:**`python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 - **Run web app:**`python run.py` and go to `http://0.0.0.0:3001/`
