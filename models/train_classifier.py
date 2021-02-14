@@ -10,7 +10,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import classification_report, f1_score, precision_score, recall_score
 from xgboost import XGBClassifier
 
@@ -24,7 +24,7 @@ def load_data(database_filepath):
     Y: dataframe containing target (i.e 36 categories)
     category_names: list of category name
     """
-    engine = create_engine('sqlite:///{}.db'.format(database_filepath))
+    engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql("SELECT * FROM etl_messages", engine)
 
     category_names = list(set(df.columns)-set(['id', 'message', 'original', 'genre']))
@@ -68,7 +68,7 @@ class ItemSelector(BaseEstimator, TransformerMixin):
     def __init__(self, key):
         self.key = key
 
-    def fit(self):
+    def fit(self, x, y=None):
         return self
 
     def transform(self, data_dict):
