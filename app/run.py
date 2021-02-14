@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie
 import joblib
 from sqlalchemy import create_engine
 
@@ -100,25 +100,47 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    category_names = list(df.iloc[:,4:].sum().index)
+    features = category_names+list(['genre'])
+    df_new = df[features].groupby('genre').sum().reset_index()
+    df_unpivot = pd.melt(df_new, id_vars=['genre'], value_vars=category_names)
+
+    category_names = [c.replace('_', '') for c in category_names] # remove '_' in name
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
+                Pie(
+                    labels=genre_names,
+                    values=genre_counts
                 )
             ],
 
             'layout': {
                 'title': 'Distribution of Message Genres',
-                'yaxis': {
-                    'title': "Count"
-                },
                 'xaxis': {
                     'title': "Genre"
                 }
+            }
+        }, 
+
+        {
+            'data': [
+                Bar(name='social', x=category_names, \
+                    y=list(df_unpivot.loc[df_unpivot['genre']=='social','value'].values)),
+                Bar(name='direct', x=category_names, \
+                    y=list(df_unpivot.loc[df_unpivot['genre']=='direct','value'].values)),
+                Bar(name='news', x=category_names, \
+                    y=list(df_unpivot.loc[df_unpivot['genre']=='news','value'].values))
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'barmode': 'stack'
             }
         }
     ]
