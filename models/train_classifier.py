@@ -108,11 +108,18 @@ def build_model():
         ])),
         ('genre_enc', ItemSelector(key=['direct', 'social', 'news'])),
     ])),
-        ('clf', MultiOutputClassifier(XGBClassifier(colsample_bytree=0.6,  max_depth=10))),
+        ('clf', MultiOutputClassifier(XGBClassifier())),
     ])
 
-    return pipeline
+    # Hyperparameter turning using Grid Search
+    parameters = {
+    'clf__estimator__max_depth': (7, 10),
+    'clf__estimator__colsample_bytree': (0.6, 1)
+    }
 
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+
+    return cv
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
@@ -138,7 +145,6 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print('Overall recall (micro): ', recall_score(y_pred, Y_test, average='micro'))
     print('Overall accuracy: ', (y_pred == Y_test.values).mean())
 
-
 def save_model(model, model_filepath):
     """
     INPUT
@@ -149,7 +155,6 @@ def save_model(model, model_filepath):
     """
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
-
 
 def main():
     if len(sys.argv) == 3:
