@@ -17,9 +17,6 @@
             position: relative;
             top: 13px;
         }
-        #graph-1 g.g-xtitle {
-            margin-top: 20px;
-        }
     </style>
 </head>
 
@@ -84,10 +81,15 @@
         </div>
     {% endblock %}
 
-    {% for id in ids %}
-        <div id="{{id}}"></div>
-    {% endfor %}
+    <div class="row">
+        {% for id in ids %}
+            <div class="col-lg-6">
+                <div id="{{id}}"></div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
 
 <script type="text/javascript">
     const graphs = {{graphJSON | safe}};
@@ -97,7 +99,7 @@
     }
 </script>
 
-<br><br><br><br>
+<br><br><br>
 
 </body>
 </html>

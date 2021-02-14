@@ -104,6 +104,7 @@ def index():
     features = category_names+list(['genre'])
     df_new = df[features].groupby('genre').sum().reset_index()
     df_unpivot = pd.melt(df_new, id_vars=['genre'], value_vars=category_names)
+    df_unpivot = df_unpivot.sort_values(by=['value'], ascending=False)
 
     category_names = [c.replace('_', '') for c in category_names] # remove '_' in name
     # create visuals
