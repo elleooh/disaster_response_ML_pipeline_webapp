@@ -11,8 +11,9 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import classification_report, f1_score, precision_score, recall_score
+from sklearn.metrics import classification_report, f1_score, precision_score, recall_score, make_scorer
 from xgboost import XGBClassifier
+from skopt import BayesSearchCV
 
 def load_data(database_filepath):
     """
@@ -113,11 +114,17 @@ def build_model():
 
     # Hyperparameter turning using Grid Search
     parameters = {
+    'clf__estimator__learning_rate': (0.01, 1.0),
+    'clf__estimator__n_estimators': (100, 1000),
     'clf__estimator__max_depth': (7, 10),
-    'clf__estimator__colsample_bytree': (0.6, 1)
+    'clf__estimator__colsample_bytree': (0.6, 1),
+    'clf__estimator__gamma': (0, 5)
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters)
+    f1_scorer = make_scorer(f1_score, average='micro')
+
+    cv = BayesSearchCV(pipeline,parameters,n_iter=10,\
+        scoring=f1_scorer,cv=3,random_state=42)
 
     return cv
 
