@@ -51,7 +51,7 @@ The emergency data is provided by [Figure Eight](https://appen.com/). The data c
 - ML pipeline: `models/train_classifier.py`
 	- load data from the SQLite database
 	- build the model using sklearn's Pipeline with custom tokenize function and [feature union with heterogeneous data sources](https://scikit-learn.org/0.18/auto_examples/hetero_feature_union.html)
-	- tune model using GridSearchCV
+	- tune model using Bayesian Optimization on XGBoost model
 	- evaluate the model based on a combination of metrics (i.e. F1-minor, precision-minor, recall-minor, accuracy) on test data.
 	- save the final model as a pickle file
 
@@ -73,4 +73,4 @@ The emergency data is provided by [Figure Eight](https://appen.com/). The data c
 
 - **Run ETL pipeline:**`python data/process_data.py data/messages.csv data/categories.csv data/DisasterResponse.db`
 - **Run ML pipeline:**`python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
-- **Run web app:**`python run.py` and go to `http://0.0.0.0:3001/`
+- **Run web app:**`app/python run.py` and go to `http://0.0.0.0:3001/`
